@@ -1,0 +1,336 @@
+;;; -*- lexical-binding: t -*-
+
+:PROPERTIES:
+#+PROPERTY: header-args :tangle yes
+#+STARTUP: overview
+:END:
+
+* PACKAGE MANAGING
+#+begin_src emacs-lisp
+  (require 'package)
+  (require 'use-package)
+  (require 'use-package-ensure)
+  (setq use-package-always-ensure t)
+
+  (setq package-archives
+        '(("GNU ELPA"     . "https://elpa.gnu.org/packages/")
+          ("MELPA"        . "https://melpa.org/packages/")
+          ("ORG"          . "https://orgmode.org/elpa/")
+          ("MELPA Stable" . "https://stable.melpa.org/packages/")
+          ("nongnu"       . "https://elpa.nongnu.org/nongnu/"))
+        package-archive-priorities
+        '(("GNU ELPA"     . 20)
+          ("MELPA"        . 15)
+          ("ORG"          . 10)
+          ("MELPA Stable" . 5)
+          ("nongnu"       . 0)))
+  (package-initialize)
+
+  (setq package-install-upgrade-built-in t)
+#+end_src
+
+
+
+* INTERFACE TWEAKS
+#+begin_src emacs-lisp
+  (setf default-frame-alist nil)  
+  (add-to-list 'default-frame-alist '(500 . 500))
+  (setq display-line-numbers-type 'visual)  
+  (global-display-line-numbers-mode 1)
+  (setq inhibit-startup-message t)
+  (setq initial-scratch-message nil)
+  (line-number-mode 1)
+  (column-number-mode t)
+  (setq frame-title-format "")
+  (menu-bar-mode -1)		     
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (tooltip-mode -1)
+#+end_src
+
+
+* FACE ATTRIBUTES
+#+begin_src emacs-lisp
+
+  (custom-set-variables
+   '(custom-enabled-themes '(deeper-blue)))
+  '(package-selected-packages
+    '(ansi-term auto-complete dashboard framemore framemove magit
+    	      org-modern rainbow-delimiters swiper try))
+
+
+
+  (set-face-attribute 'line-number-current-line nil
+                      :foreground "#FF6600"
+                      :background "#222222"
+                      :bold t
+                      )             
+  (set-face-attribute 'default nil
+                      :font "JetBrains Mono-12"
+                      :height 120
+                      :weight 'demi-bold
+                      ) 
+#+end_src
+
+
+* USER MADE KEYBINDING FUNCTIONS
+#+begin_src emacs-lisp
+  (defun tangle-init ()
+    "If the current buffer is init.org the code-blocks are
+  tangled, and the tangled file is compiled."
+    (when (equal (buffer-file-name)
+                 (expand-file-name (concat user-emacs-directory "config.org")))
+      ;; Avoid running hooks when tangling.
+      (let ((prog-mode-hook nil))
+        (org-babel-tangle)
+        (byte-compile-file (concat user-emacs-directory "init.el")))))
+
+  (add-hook 'after-save-hook 'tangle-init)
+
+
+  (defun my-reload-config ()
+    (interactive)
+    (org-babel-load-file "~/.emacs.d/config.org"))
+
+  (defun indent-region-or-buffer ()
+    (interactive)
+    (save-excursion
+      (indent-region (point-min) (point-max))))
+
+  (defun my-backspace ()
+    (interactive)
+    (if (looking-back "^[[:space:]]+" (line-beginning-position))
+        (indent-rigidly (line-beginning-position) (point) (- tab-width))
+      (delete-char -1)))
+
+  (defun my-move-end-of-line ()        ; C-e moves the cursor to before the first char of the line +
+    (interactive)                      ; if it is before the first char of the line
+    (if (< (point) (progn (back-to-indentation) (point)))
+        (back-to-indentation)
+      (end-of-line)))
+
+  (defun my-move-beginning-of-line ()  ; C-a moves the cursor  before the first char of the line. 
+    (interactive)                      ; pressing again moves to the beginning of the line
+    (if (= (point) (progn (back-to-indentation) (point)))
+        (beginning-of-line)))
+
+  (defun my-pre-compile-command (&rest args)
+    (setq file_name (file-name-nondirectory (or (buffer-file-name) (buffer-name))))
+    (setq file_name_sans_ext (file-name-base (file-name-sans-extension (or (buffer-file-name) (buffer-name))))))
+
+
+  (advice-add 'compile :before #'my-pre-compile-command)
+
+#+end_src
+
+
+
+* KEYBINDINGS
+#+begin_src emacs-lisp
+  (define-key input-decode-map [?\C-i] [C-i])
+  (define-key input-decode-map [?\C-m] [C-m])  
+    					;(keymap-global-set "C-x k" 'kill-line)
+  (keymap-global-unset "C-x C-c")  
+  (keymap-global-set "C-z" 'undo)
+  (keymap-global-unset "C-x C-b")
+  (with-eval-after-load 'ivy
+    (define-key ivy-switch-buffer-map (kbd "C-k") nil))
+  (keymap-global-set "C-b" 'swiper-recenter-top-bottom)
+  (bind-key* "C-n" 'my-backspace)
+  (bind-key* "<backtab>" 'indent-region-or-buffer)
+  (keymap-global-set "<f5>" 'compile)  					
+  (global-set-key (kbd "<C-m>") 'delete-forward-char)
+  (keymap-global-set "TAB" #'indent-for-tab-command)
+  (keymap-global-set "C-v" 'kill-line)
+  (keymap-global-unset "C-c C-e")      
+  (keymap-global-unset "C-p")
+  (keymap-global-unset "C-n")
+  (define-key org-mode-map (kbd "C-j") nil)
+  (global-set-key (kbd "C-j") 'backward-char)
+  (global-set-key (kbd "C-l") 'forward-char)
+  (global-set-key (kbd "<C-i>") 'previous-line)
+  (global-set-key (kbd "C-k") 'next-line)
+  (global-unset-key (kbd "C-o"))
+  (global-set-key (kbd "C-=") 'text-scale-increase)
+  (global-set-key (kbd "C--") 'text-scale-decrease)
+  (global-set-key (kbd "DEL") 'my-backspace)
+  (bind-key* "C-M-j" 'backward-word)  
+  (bind-key* "C-M-l" 'forward-word)
+  (keymap-global-set "C-d" 'my-move-end-of-line)
+  (keymap-global-set "C-a" 'my-move-beginning-of-line)
+  (global-set-key (kbd "C-c r") 'my-reload-config)
+  (keymap-global-set "C-x k" 'kill-current-buffer)
+  (keymap-global-set "C-f" 'swiper-isearch)
+  (bind-key* "C-M-m" 'kill-word)
+  (keymap-global-set "C-M-n" 'backward-kill-word)
+  (keymap-global-set "C-s" #'swiper-isearch)
+  (keymap-global-set "M-x" #'counsel-M-x)
+  (keymap-global-set "C-x C-f" #'counsel-find-file)
+  (bind-key* "C-M-i" 'scroll-down-command)
+  (bind-key* "C-M-k" 'scroll-up-command)
+  
+  (global-set-key (kbd "<left>")  #'windmove-left)
+  (global-set-key (kbd "<right>") #'windmove-right)
+  (global-set-key (kbd "<up>")    #'windmove-up)
+  (global-set-key (kbd "<down>")  #'windmove-down)
+#+end_src
+
+
+* USER MADE VARIABLES...
+#+begin_src emacs-lisp
+
+
+
+#+end_src
+
+
+* MISC
+#+begin_src emacs-lisp
+  (auto-fill-mode 1)
+  (electric-indent-mode -1)
+  (show-paren-mode 1)
+  (setq show-paren-delay 0)
+  (setq show-paren-style 'parenthesis)
+  (setq global-font-lock-mode t)
+  (fset 'yes-or-no-p 'y-or-n-p)      
+  (setq blink-cursor-mode -1)
+  (setq c-context-line-break t)
+  (setq auto-save-file-name-transforms
+        `((".*" ,(concat user-emacs-directory "auto-save-list/") t))) 
+  (setq auto-save-silent t)
+  (setq auto-save-delete-trailing-whitespace t)
+  (add-to-list 'display-buffer-alist
+               '("\\*compilation\\*"
+                 (display-buffer-reuse-window display-buffer-below-selected)
+                 (window-height . 0.4)))
+  (add-hook 'c-mode-hook
+            (lambda ()   
+      	    (setq file_name (file-name-nondirectory (or (buffer-file-name) (buffer-name))))
+      	    (setq file_name_sans_ext (file-name-base (file-name-sans-extension (or (buffer-file-name) (buffer-name)))))
+      	    (local-set-key (kbd "<f5>")
+        			   (lambda () (interactive)
+        			     (compile (concat "gcc " file_name " -o " file_name_sans_ext " && ./" file_name_sans_ext))))))
+  (font-lock-mode t)  
+  ;;(add-hook 'after-init-hook 'global-font-lock-mode)
+
+#+end_src
+
+
+* ORG MODE CONFIGS
+#+begin_src emacs-lisp
+  (use-package olivetti
+    :defer t
+    :config
+    ;; (setq olivetti-style t)
+    )
+
+
+  (use-package org
+    ;; :defer t
+    ;; :hook (org-mode . olivetti-mode)
+    :hook . (lambda ()
+              (setq display-line-numbers-type 'visual)
+              (display-line-numbers-mode 1))
+
+    :config
+    ;; Resize Org headings
+    ;; (custom-set-faces
+    ;;  '(org-document-title ((t (:height 1.6))))
+    ;;  '(outline-1          ((t (:height 1.25))))
+    ;;  '(outline-2          ((t (:height 1.2))))
+    ;;  '(outline-3          ((t (:height 1.2))))
+    ;;  '(outline-4          ((t (:height 1.2))))
+    ;;  '(outline-5          ((t (:height 1.2))))
+    ;;  '(outline-6          ((t (:height 1.2))))
+    ;;  '(outline-7          ((t (:height 1.2))))
+    ;;  '(outline-8          ((t (:height 1.2))))
+    ;;  '(outline-9          ((t (:height 1.2)))))
+    (setq org-startup-with-latex-preview t)
+    (setq org-startup-folded 'content)
+    (setq org-src-fontify-natively t
+  	org-src-tab-acts-natively t
+  	org-src-content-indentation 0))
+
+  ;; (use-package org-appear
+  ;;   :commands (org-appear-mode)
+  ;;   :hook     (org-mode . org-appear-mode)
+  ;;   :config 
+  ;;   (setq org-hide-emphasis-markers t)  ;; Must be activated for org-appear to work
+  ;;   (setq org-appear-autoemphasis   t   ;; Show bold, italics, verbatim, etc.
+  ;;         org-appear-autolinks      t   ;; Show links
+  ;;         org-appear-autosubmarkers t)) ;; Show sub- and superscript
+
+#+end_src
+
+
+* GENERAL PACKAGES
+#+begin_src emacs-lisp
+  ;; (use-package grip-mode
+  ;;   :ensure t
+  ;;   :config (setq grip-command 'auto) ;; auto, grip, go-grip or mdopen
+  ;;   :bind (:map markdown-mode-command-map
+  ;;               ("g" . grip-mode)))
+
+
+  (use-package auto-complete
+    :ensure t
+    :init
+    (progn
+      (ac-config-default)
+      (global-auto-complete-mode t)
+      ))
+  (use-package rainbow-delimiters
+    :ensure t
+    :hook (prog-mode . rainbow-delimiters-mode))
+
+  (use-package xclip
+    :ensure t
+    :defer t
+    :hook
+    (after-init . xclip-mode))    
+
+  (use-package indent-guide
+    :defer t
+    :ensure t 
+    :hook
+    (prog-mode . indent-guide-mode)  ;; Activate indent-guide in programming modes.
+    :config
+    (setq indent-guide-char "│"))    ;; Set the character used for the indent guide.
+
+     					;(setq highlight-indent-guides-method 'character))
+  ;; (use-package doom-modeline
+  ;;   :ensure t
+  ;;   ;:straight t
+  ;;   :defer t
+  ;;   :custom
+  ;;   (doom-modeline-buffer-file-name-style 'buffer-name)  ;; Set the buffer file name style to just the buffer name (without path).
+  ;;   (doom-modeline-project-detection 'project)           ;; Enable project detection for displaying the project name.
+  ;;   (doom-modeline-buffer-name t)                        ;; Show the buffer name in the mode line.
+  ;;   (doom-modeline-vcs-max-length 25)                    ;; Limit the version control system (VCS) branch name length to 25 characters.
+  ;;   :config
+  ;;   (if ek-use-nerd-fonts                                ;; Check if nerd fonts are being used.
+  ;;       (setq doom-modeline-icon t)                      ;; Enable icons in the mode line if nerd fonts are used.
+  ;;     (setq doom-modeline-icon nil))                     ;; Disable icons if nerd fonts are not being used.
+  ;;   :hook
+  ;;   (after-init . doom-modeline-mode))
+
+  (use-package counsel :ensure t)
+  (use-package swiper :ensure t)
+  (use-package magit :ensure t)
+  (ivy-mode t)
+  (setopt ivy-use-virtual-buffers t)
+  (setopt enable-recursive-minibuffers t)
+  (setopt search-default-mode #'char-fold-to-regexp)
+#+end_src
+
+
+* CONFIGS USED 
+
+[[https://github.com/SophieBosio/.emacs.d]]
+
+
+* DEPRECATED/TESTING
+
+
+
+
