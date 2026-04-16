@@ -54,9 +54,9 @@
 
   (custom-set-variables
    '(custom-enabled-themes '(deeper-blue)))
-  '(package-selected-packages
-    '(ansi-term auto-complete dashboard framemore framemove magit
-    	      org-modern rainbow-delimiters swiper try))
+  ;;'(package-selected-packages
+  ;;  '(ansi-term auto-complete dashboard framemore framemove magit
+  ;;  	      org-modern rainbow-delimiters swiper try))
 
 
 
@@ -129,7 +129,7 @@
 #+begin_src emacs-lisp
   (define-key input-decode-map [?\C-i] [C-i])
   (define-key input-decode-map [?\C-m] [C-m])  
-    					;(keymap-global-set "C-x k" 'kill-line)
+  					;(keymap-global-set "C-x k" 'kill-line)
   (keymap-global-unset "C-x C-c")  
   (keymap-global-set "C-z" 'undo)
   (keymap-global-unset "C-x C-b")
@@ -168,7 +168,7 @@
   (keymap-global-set "C-x C-f" #'counsel-find-file)
   (bind-key* "C-M-i" 'scroll-down-command)
   (bind-key* "C-M-k" 'scroll-up-command)
-  
+
   (global-set-key (kbd "<left>")  #'windmove-left)
   (global-set-key (kbd "<right>") #'windmove-right)
   (global-set-key (kbd "<up>")    #'windmove-up)
@@ -205,11 +205,11 @@
                  (window-height . 0.4)))
   (add-hook 'c-mode-hook
             (lambda ()   
-      	    (setq file_name (file-name-nondirectory (or (buffer-file-name) (buffer-name))))
-      	    (setq file_name_sans_ext (file-name-base (file-name-sans-extension (or (buffer-file-name) (buffer-name)))))
-      	    (local-set-key (kbd "<f5>")
-        			   (lambda () (interactive)
-        			     (compile (concat "gcc " file_name " -o " file_name_sans_ext " && ./" file_name_sans_ext))))))
+        	    (setq file_name (file-name-nondirectory (or (buffer-file-name) (buffer-name))))
+        	    (setq file_name_sans_ext (file-name-base (file-name-sans-extension (or (buffer-file-name) (buffer-name)))))
+        	    (local-set-key (kbd "<f5>")
+          		   (lambda () (interactive)
+          		     (compile (concat "gcc " file_name " -o " file_name_sans_ext " && ./" file_name_sans_ext))))))
   (font-lock-mode t)  
   ;;(add-hook 'after-init-hook 'global-font-lock-mode)
 
@@ -225,34 +225,35 @@
     )
 
 
-  (use-package org
-    ;; :defer t
-    ;; :hook (org-mode . olivetti-mode)
-    :hook . (lambda ()
-              (setq display-line-numbers-type 'visual)
-              (display-line-numbers-mode 1))
+  ;; (use-package org
+  ;;   ;; :defer t
+  ;;   ;; :hook (org-mode . olivetti-mode)
+  ;;   :hook . (lambda ()
+  ;;             (setq display-line-numbers-type 'visual)
+  ;;             (display-line-numbers-mode 1))
 
-    :config
-    ;; Resize Org headings
-    ;; (custom-set-faces
-    ;;  '(org-document-title ((t (:height 1.6))))
-    ;;  '(outline-1          ((t (:height 1.25))))
-    ;;  '(outline-2          ((t (:height 1.2))))
-    ;;  '(outline-3          ((t (:height 1.2))))
-    ;;  '(outline-4          ((t (:height 1.2))))
-    ;;  '(outline-5          ((t (:height 1.2))))
-    ;;  '(outline-6          ((t (:height 1.2))))
-    ;;  '(outline-7          ((t (:height 1.2))))
-    ;;  '(outline-8          ((t (:height 1.2))))
-    ;;  '(outline-9          ((t (:height 1.2)))))
-    (setq org-startup-with-latex-preview t)
-    (setq org-startup-folded 'content)
-    (setq org-src-fontify-natively t
-  	org-src-tab-acts-natively t
-  	org-src-content-indentation 0))
+  ;;   :config
+  ;;   ;; Resize Org headings
+  ;;   ;; (custom-set-faces
+  ;;   ;;  '(org-document-title ((t (:height 1.6))))
+  ;;   ;;  '(outline-1          ((t (:height 1.25))))
+  ;;   ;;  '(outline-2          ((t (:height 1.2))))
+  ;;   ;;  '(outline-3          ((t (:height 1.2))))
+  ;;   ;;  '(outline-4          ((t (:height 1.2))))
+  ;;   ;;  '(outline-5          ((t (:height 1.2))))
+  ;;   ;;  '(outline-6          ((t (:height 1.2))))
+  ;;   ;;  '(outline-7          ((t (:height 1.2))))
+  ;;   ;;  '(outline-8          ((t (:height 1.2))))
+  ;;   ;;  '(outline-9          ((t (:height 1.2)))))
+  ;;   (setq org-startup-with-latex-preview t)
+  ;;   (setq org-startup-folded 'content)
+  ;;   (setq org-src-fontify-natively t
+  ;; 	org-src-tab-acts-natively t
+  ;; 	org-src-content-indentation 0))
 
-  ;; (use-package org-appear
-  ;;   :commands (org-appear-mode)
+  ;; ;; (use-package org-appear
+  ;; ;;   :commands (or
+  ;; g-appear-mode)
   ;;   :hook     (org-mode . org-appear-mode)
   ;;   :config 
   ;;   (setq org-hide-emphasis-markers t)  ;; Must be activated for org-appear to work
@@ -265,26 +266,13 @@
 
 * GENERAL PACKAGES
 #+begin_src emacs-lisp
-  ;; (use-package grip-mode
-  ;;   :ensure t
-  ;;   :config (setq grip-command 'auto) ;; auto, grip, go-grip or mdopen
-  ;;   :bind (:map markdown-mode-command-map
-  ;;               ("g" . grip-mode)))
 
-
-  (use-package auto-complete
-    :ensure t
-    :init
-    (progn
-      (ac-config-default)
-      (global-auto-complete-mode t)
-      ))
   (use-package rainbow-delimiters
     :ensure t
     :hook (prog-mode . rainbow-delimiters-mode))
 
   (use-package xclip
-    :ensure t
+    :ensure 
     :defer t
     :hook
     (after-init . xclip-mode))    
