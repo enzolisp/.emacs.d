@@ -129,7 +129,6 @@
 #+begin_src emacs-lisp
   (define-key input-decode-map [?\C-i] [C-i])
   (define-key input-decode-map [?\C-m] [C-m])  
-  					;(keymap-global-set "C-x k" 'kill-line)
   (keymap-global-unset "C-x C-c")  
   (keymap-global-set "C-z" 'undo)
   (keymap-global-unset "C-x C-b")
@@ -168,6 +167,8 @@
   (keymap-global-set "C-x C-f" #'counsel-find-file)
   (bind-key* "C-M-i" 'scroll-down-command)
   (bind-key* "C-M-k" 'scroll-up-command)
+  (bind-key* "<home>" 'beginning-of-buffer)
+  (bind-key* "<end>" 'end-of-buffer)
 
   (global-set-key (kbd "<left>")  #'windmove-left)
   (global-set-key (kbd "<right>") #'windmove-right)
