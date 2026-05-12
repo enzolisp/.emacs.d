@@ -149,7 +149,6 @@
   (global-set-key (kbd "<C-m>") 'delete-forward-char)
   (keymap-global-set "TAB" #'indent-for-tab-command)
   (global-set-key (kbd "C-v") #'my/kill-line-no-ring)
-      					;(keymap-global-set "C-v" 'kill-line)
   (keymap-global-unset "C-c C-e")      
   (keymap-global-unset "C-p")
   (keymap-global-unset "C-n")
