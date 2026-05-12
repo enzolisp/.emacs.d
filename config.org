@@ -196,6 +196,8 @@
 
 * MISC
 #+begin_src emacs-lisp
+  (setq frame-title-format '((:eval (or (buffer-file-name) default-directory))))
+
   (auto-fill-mode 1)
   (electric-indent-mode -1)
   (show-paren-mode 1)
