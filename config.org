@@ -181,6 +181,13 @@
   (keymap-global-unset "C-x C-f")
   (keymap-global-unset "C-e")
 
+  (bind-key* "<menu> i" 'enlarge-window)
+  (bind-key* "<menu> k" 'shrink-window)
+  (bind-key* "<menu> l" 'enlarge-window-horizontally)
+  (bind-key* "<menu> j" 'shrink-window-horizontally)
+  (repeat-mode 1)
+
+
 
   (global-set-key (kbd "<left>")  #'windmove-left)
   (global-set-key (kbd "<right>") #'windmove-right)
