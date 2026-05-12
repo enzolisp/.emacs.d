@@ -221,13 +221,15 @@
                  (window-height . 0.4)))
   (add-hook 'c-mode-hook
             (lambda ()   
-        	    (setq file_name (file-name-nondirectory (or (buffer-file-name) (buffer-name))))
-        	    (setq file_name_sans_ext (file-name-base (file-name-sans-extension (or (buffer-file-name) (buffer-name)))))
-        	    (local-set-key (kbd "<f5>")
-          		   (lambda () (interactive)
-          		     (compile (concat "gcc " file_name " -o " file_name_sans_ext " && ./" file_name_sans_ext))))))
+              (setq file_name (file-name-nondirectory (or (buffer-file-name) (buffer-name))))
+              (setq file_name_sans_ext (file-name-base (file-name-sans-extension (or (buffer-file-name) (buffer-name)))))
+              (local-set-key (kbd "<f5>")
+            		   (lambda () (interactive)
+            		     (compile (concat "gcc " file_name " -o " file_name_sans_ext " && ./" file_name_sans_ext))))))
   (font-lock-mode t)  
   ;;(add-hook 'after-init-hook 'global-font-lock-mode)
+
+
 
 #+end_src
 
