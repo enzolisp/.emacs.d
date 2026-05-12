@@ -279,6 +279,10 @@
 * GENERAL PACKAGES
 #+begin_src emacs-lisp
 
+  (use-package magit
+    :ensure t
+    :bind ("C-x g" . magit-status))
+
   (use-package rainbow-delimiters
     :ensure t
     :hook (prog-mode . rainbow-delimiters-mode))
