@@ -152,7 +152,7 @@
   (keymap-global-unset "C-x C-b")
   (with-eval-after-load 'ivy
     (define-key ivy-switch-buffer-map (kbd "C-k") nil))
-  (keymap-global-set "C-b" 'swiper-recenter-top-bottom)
+  (keymap-global-set "C-b" 'recenter-top-bottom)
   (bind-key* "C-n" 'my-backspace)
   (bind-key* "<backtab>" 'indent-region-or-buffer)
   (keymap-global-set "<f5>" 'compile)  					
