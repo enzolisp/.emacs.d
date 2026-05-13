@@ -73,6 +73,13 @@
                       :height 120
                       :weight 'demi-bold
                       ) 
+  ;; git diff colors  
+  (custom-set-faces
+   '(diff-hl-insert ((t (:background "#50a050" :foreground "#50a050"))))  ; green   
+   '(diff-hl-delete ((t (:background "#a05050" :foreground "#a05050"))))  ; red
+   '(diff-hl-change ((t (:background "#d49f11" :foreground "#d49f11"))))) ; yellow
+
+
 #+end_src
 
 
