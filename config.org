@@ -34,7 +34,10 @@
 * INTERFACE TWEAKS
 #+begin_src emacs-lisp
   (setf default-frame-alist nil)  
-  (add-to-list 'default-frame-alist '(500 . 500))
+  (add-to-list 'default-frame-alist '(width . 200))
+  (add-to-list 'default-frame-alist '(height . 50 ))
+
+
   (setq display-line-numbers-type 'visual)  
   (global-display-line-numbers-mode 1)
   (setq inhibit-startup-message t)
