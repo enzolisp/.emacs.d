@@ -360,6 +360,7 @@
 * CONFIGS USED 
 
 [[https://github.com/SophieBosio/.emacs.d]]
+https://gitlab.com/dwt1/dotfiles/-/tree/master/.config/doom
 
 
 * DEPRECATED/TESTING
